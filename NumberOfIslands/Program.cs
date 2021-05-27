@@ -28,42 +28,41 @@ namespace NumberOfIslands
                 for (int j = 0; j < grid[i].Length; j++)
                 {
                     char c = grid[i][j];
-                    if (!IsIsland(c) || islands.Contains((i, j)))
+                    if (!IsIsland(c) || islands.Contains((i,j)))
                     {
                         continue;
-                    }
-                    else if (IsIsland(c))
+                    } else if(IsIsland(c))
                     {
                         numIslands++;
-                        CheckAndMarkEntireIsland(islands, grid, i, j);
+                        CheckAndMarkEntireIsland(i, j);
                     }
                 }
             }
 
             return numIslands;
-        }
 
-        public static void CheckAndMarkEntireIsland(HashSet<(int, int)> islands, char[][] grid, int i, int j)
-        {
-            if (i < 0 || i >= grid.Length)
-                return;
-
-            if (j < 0 || j >= grid[i].Length)
-                return;
-
-            if (IsIsland(grid[i][j]) && !islands.Contains((i, j)))
+            void CheckAndMarkEntireIsland(int i, int j)
             {
-                islands.Add((i, j));
-                CheckAndMarkEntireIsland(i + 1, j);
-                CheckAndMarkEntireIsland(i - 1, j);
-                CheckAndMarkEntireIsland(i, j + 1);
-                CheckAndMarkEntireIsland(i, j - 1);
-            }
-        }
+                if (i < 0 || i >= grid.Length)
+                    return;
 
-        public static bool IsIsland(char c)
-        {
-            return c == '1' ? true : false;
+                if (j < 0 || j >= grid[i].Length)
+                    return;
+
+                if (IsIsland(grid[i][j]) && !islands.Contains((i,j)))
+                {
+                    islands.Add((i, j));
+                    CheckAndMarkEntireIsland(i + 1, j);
+                    CheckAndMarkEntireIsland(i - 1, j);
+                    CheckAndMarkEntireIsland(i, j + 1);
+                    CheckAndMarkEntireIsland(i, j - 1);
+                }
+            }
+
+            bool IsIsland(char c)
+            {
+                return c == '1' ? true : false;
+            }
         }
     }
 }
