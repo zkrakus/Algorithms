@@ -6,72 +6,86 @@ namespace Sorts
     {
         static void Main(string[] args)
         {
-            var arr = new int[] { 10, 8, 1 , 4 , 5 , 3 };
-            MergeSort(arr);
+            var arr = new int[] { 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+            var sortedArr = MergeSort(arr);
             Console.WriteLine("Hello World!");
         }
 
-        public static void MergeSort(int[] arr)
+        public static int[] MergeSort(int[] arr)
         {
             if (arr == null || arr.Length == 1)
-                return;
+                return arr;
 
-            Merge(0, arr.Length / 2 - 1, arr.Length / 2, arr.Length - 1, arr);
+            var sortedArr = SplitRec(arr);
+
+            return sortedArr;
         }
 
-        private static void Merge(int i, int j, int k, int m, int[] arr)
-        {
-            if (j - i > 0)
-            {
-                Merge(i, j / 2, j / 2 + 1, j, arr);
+        private static int[] SplitRec(int[] arr) {
+            int[] leftArray, rightArray;
+
+            if (arr.Length == 1)
+                return arr;
+
+            if (IsEven(arr.Length)) {
+                leftArray = new int[arr.Length / 2];
+                Array.Copy(arr, 0, leftArray, 0, arr.Length / 2);
+
+                rightArray = new int[arr.Length / 2];
+                Array.Copy(arr, arr.Length / 2, rightArray, 0, arr.Length / 2);
+            } else {
+                leftArray = new int[arr.Length / 2];
+                Array.Copy(arr, 0, leftArray, 0, arr.Length / 2);
+
+                rightArray = new int[arr.Length / 2 + 1];
+                Array.Copy(arr, arr.Length / 2, rightArray, 0, arr.Length / 2 + 1);
             }
 
-            if (m - k > 0)
-            {
-                Merge(k, j + m / 2, j + m / 2 + 1, m, arr);
-            }
+            int[] sortedLeftArray = SplitRec(leftArray); // Arrays of length 1 are considered sorted
+            int[] sortedRightArray = SplitRec(rightArray); // Arrays of length 1 are considered sorted
 
-            int n = i;
-            while (i <= j && k <= m)
-            {
-                if (arr[k] < arr[n])
-                {
-                    swap(n, k, arr);
+            return Merge(sortedLeftArray, sortedRightArray);
+        }
+
+        private static int[] Merge(int[] leftSortedArray, int[] rightSortedArray) {
+            int i = 0, j = 0, n = 0;
+            int k = leftSortedArray.Length;
+            int m = rightSortedArray.Length;
+
+            int[] sortedArray = new int[k + m];
+
+            while(i < k && j < m) {
+                int a = leftSortedArray[i];
+                int b = rightSortedArray[j];
+
+                if(a <= b) {
+                    sortedArray[n] = a;
+                    n++;
                     i++;
                 }
-                else
-                {
-                    swap(n, i, arr);
-                    k++;
-                }
 
-                n++;
+                if(a > b) {
+                    sortedArray[n] = b;
+                    n++;
+                    j++;
+                }
             }
 
-            while (i < j)
-            {
-                if (arr[n] < arr[i])
-                    swap(n, i, arr);
-
+            while(i < k) {
+                sortedArray[n] = leftSortedArray[i];
                 i++;
                 n++;
             }
 
-            while (k < m)
-            {
-                if (arr[n] < arr[k])
-                    swap(n, k, arr);
-
-                k++;
+            while(j < m) {
+                sortedArray[n] = rightSortedArray[j];
+                j++;
                 n++;
             }
+
+            return sortedArray;
         }
 
-        private static void swap(int i, int j, int[] arr)
-        {
-            int tmp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = tmp;
-        }
+        private static bool IsEven(int num) => num % 2 == 0 ? true : false;
     }
 }
